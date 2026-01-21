@@ -1,6 +1,36 @@
+async function registerPasskey() {
+    const createOptionsResponse = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ start: true, finish: false, credential: null }),
+    });
+
+    const { createOptions } = await createOptionsResponse.json();
+    console.log("createOptions", createOptions)
+
+    const credential = await navigator.credentials.create(
+        createOptions,
+    );
+    console.log(credential)
+
+    const response = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ start: false, finish: true, credential }),
+    });
+    console.log(response)
+
+    if (response.ok) {
+        toast.success("Registered passkey successfully!");
+        return;
+    }
+}
+
 const handleRegistration = (e) => {
     e.preventDefault()
     console.log('clicked register!')
+    registerPasskey()
 }
 
 const LoginPage = () => {

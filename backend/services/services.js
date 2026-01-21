@@ -3,25 +3,15 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const db = {
-    users: [
-        { id: 'bob' },
-        { id: 'susan' },
-        { id: 'lisa' },
-    ]
-}
-
 const passkeyApi = tenant({
     apiKey: process.env.PASSKEYS_API_KEY,
     tenantId: process.env.PASSKEYS_TENANT_ID,
 });
 
-async function startServerPasskeyRegistration(userID) {
-    const user = db.users.find((user) => user.id === userID);
-
+async function startServerPasskeyRegistration() {
     const createOptions = await passkeyApi.registration.initialize({
-        userId: user.id,
-        username: user.email || "",
+        userId: 'anon',
+        username: 'anon@yellow.com'
     });
 
     return createOptions;
