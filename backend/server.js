@@ -16,10 +16,10 @@ const corsOptions = {
 app.use(express.json())
 app.use(cors(corsOptions))
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     try {
         console.log('hit register')
-        controller.handlePasskeyRegister(req, res)
+        await controller.handlePasskeyRegister(req, res)
     } catch (err) {
         console.error(err)
     }
