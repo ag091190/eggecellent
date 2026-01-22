@@ -8,15 +8,16 @@ async function registerPasskey() {
     const { createOptions } = await createOptionsResponse.json();
     console.log("createOptions", createOptions)
 
-    const credential = await navigator.credentials.create(
-        createOptions,
-    );
+    console.log("parsing createOption from JSON to arraybuffer")
+    const publicKey = PublicKeyCredential.parseCreationOptionsFromJSON(createOptions.publicKey)
+
+    console.log("parsing complete, pass to navigator for biometric prompt")
+    const credential = await navigator.credentials.create({ publicKey });
     console.log(credential)
 
     const response = await fetch("http://localhost:3000/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ start: false, finish: true, credential }),
     });
     console.log(response)
@@ -27,10 +28,49 @@ async function registerPasskey() {
     }
 }
 
+async function signInWithPasskey() {
+    const createOptionsResponse = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ start: true, finish: false, credential: null }),
+    });
+
+    const { loginOptions } = await createOptionsResponse.json();
+
+    console.log('loginOptions', loginOptions)
+    // Open "register passkey" dialog
+    const options = await get(
+        loginOptions.publicKey,
+    );
+
+    const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ start: false, finish: true, options }),
+    });
+
+    if (response.ok) {
+        console.log("user logged in with passkey")
+        alert("login successful")
+        return;
+    }
+}
+
+async function get(loginOption) {
+    const publicKey = PublicKeyCredential.parseRequestOptionsFromJSON(loginOption);
+    const credential = (await navigator.credentials.get({ publicKey }))
+    return credential.toJSON();
+}
+
 const handleRegistration = (e) => {
     e.preventDefault()
     console.log('clicked register!')
     registerPasskey()
+}
+
+const handleLogin = () => {
+    console.log('clicked login!')
+    signInWithPasskey()
 }
 
 const LoginPage = () => {
@@ -52,7 +92,10 @@ const LoginPage = () => {
                     <div className="h-0.5 w-12 bg-[#FFD700] mx-auto mt-3 rounded-full" />
                 </div>
 
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-6" onSubmit={(e) => {
+                    e.preventDefault()
+                    handleLogin()
+                }}>
                     <div className="space-y-2">
                         <label className="text-xs font-black uppercase tracking-widest text-stone-400 ml-1">Email Address</label>
                         <input

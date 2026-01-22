@@ -25,6 +25,15 @@ app.post('/register', async (req, res) => {
     }
 })
 
+app.post('/login', async (req, res) => {
+    try {
+        console.log('hit login')
+        await controller.handlePasskeyLogin(req, res)
+    } catch (err) {
+        console.error(err)
+    }
+})
+
 app.listen(port, () => {
     console.log(`Eggcellent backend started on port ${port}`)
 })

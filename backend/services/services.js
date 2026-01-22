@@ -21,4 +21,15 @@ async function finishServerPasskeyRegistration(credential) {
     await passkeyApi.registration.finalize(credential);
 }
 
-export { startServerPasskeyRegistration, finishServerPasskeyRegistration }
+async function startServerPasskeyLogin() {
+    const options = await passkeyApi.login.initialize();
+    return options;
+}
+
+async function finishServerPasskeyLogin(options) {
+    console.log('options', options)
+    const response = await passkeyApi.login.finalize(options);
+    return response;
+}
+
+export { startServerPasskeyRegistration, finishServerPasskeyRegistration, startServerPasskeyLogin, finishServerPasskeyLogin }
