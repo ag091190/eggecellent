@@ -1,15 +1,17 @@
+import pool from '../config/db.js'
+
 const registerUser = async (userData) => {
     const { username, email, password } = userData
 
-    if (username === 'bob') {
-        throw new Error("Bob can't register, we don't like Bob")
-    }
+    const newUser = await pool.query(
+        `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email`,
+        [username, email, password]
+    )
 
-    const newUser = {
-        "message": "all good"
-    }
+    console.log('inserted to db')
+    console.log(newUser)
 
-    return newUser
+    return newUser[0]
 }
 
 export { registerUser }

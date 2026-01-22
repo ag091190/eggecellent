@@ -10,7 +10,6 @@ services:
       - /app/node_modules # prevent overwriting remotely built node modules
     depends_on:
       - backend
-    
 
   backend:
     build: ./backend
@@ -21,3 +20,20 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules # prevent overwriting remotely built node modules
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=bob
+      - POSTGRES_PASSWORD=bob123
+      - POSTGRES_DB=bobdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist data here
+
+volumes:
+  postgres_data:
