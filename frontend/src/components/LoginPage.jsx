@@ -1,6 +1,11 @@
 async function signInWithPasskey() {
-    const response = await fetch("http://localhost:3000/api", {
-        method: "POST"
+    const response = await fetch("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+            username: "bob",
+            email: "bob@gmail",
+            password: "bob123",
+        })
     });
 
     if (response.ok) {
