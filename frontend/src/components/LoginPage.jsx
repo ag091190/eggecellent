@@ -1,52 +1,6 @@
-async function registerPasskey() {
-    const createOptionsResponse = await fetch("http://localhost:3000/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ start: true, finish: false, credential: null }),
-    });
-
-    const { createOptions } = await createOptionsResponse.json();
-    console.log("createOptions", createOptions)
-
-    console.log("parsing createOption from JSON to arraybuffer")
-    const publicKey = PublicKeyCredential.parseCreationOptionsFromJSON(createOptions.publicKey)
-
-    console.log("parsing complete, pass to navigator for biometric prompt")
-    const credential = await navigator.credentials.create({ publicKey });
-    console.log(credential)
-
-    const response = await fetch("http://localhost:3000/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ start: false, finish: true, credential }),
-    });
-    console.log(response)
-
-    if (response.ok) {
-        toast.success("Registered passkey successfully!");
-        return;
-    }
-}
-
 async function signInWithPasskey() {
-    const createOptionsResponse = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ start: true, finish: false, credential: null }),
-    });
-
-    const { loginOptions } = await createOptionsResponse.json();
-
-    console.log('loginOptions', loginOptions)
-    // Open "register passkey" dialog
-    const options = await get(
-        loginOptions.publicKey,
-    );
-
-    const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ start: false, finish: true, options }),
+    const response = await fetch("http://localhost:3000/api", {
+        method: "POST"
     });
 
     if (response.ok) {
@@ -56,16 +10,9 @@ async function signInWithPasskey() {
     }
 }
 
-async function get(loginOption) {
-    const publicKey = PublicKeyCredential.parseRequestOptionsFromJSON(loginOption);
-    const credential = (await navigator.credentials.get({ publicKey }))
-    return credential.toJSON();
-}
-
 const handleRegistration = (e) => {
     e.preventDefault()
     console.log('clicked register!')
-    registerPasskey()
 }
 
 const handleLogin = () => {
