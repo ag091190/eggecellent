@@ -9,7 +9,7 @@ export const validateRegistration = (userData) => {
     }
 
     try {
-        const { username, email, password } = userData
+        const { username, email, password, confirmPassword } = userData
 
         if (!username || username.trim().length < 3) {
             errors.push("username must be at least 3 characters long.")
@@ -23,6 +23,15 @@ export const validateRegistration = (userData) => {
         if (!password || password.length < 8) {
             errors.push("Password has to be at least 8 characters long.")
         }
+
+        if (!confirmPassword || confirmPassword.length < 8) {
+            errors.push("Confirm password has to be at least 8 characters long.")
+        }
+
+        if (password !== confirmPassword) {
+            errors.push("Passwords do not match.")
+        }
+
     } catch (error) {
         console.error('error: ', error)
         errors.push("User data is invalid")
