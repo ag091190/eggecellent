@@ -1,0 +1,7 @@
+services:
+  backend:
+    environment:
+      - PGHOST=${PGHOST}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD} # This looks for a system variable
+      - PGDATABASE=${PGDATABASE}
